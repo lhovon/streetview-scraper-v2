@@ -1,0 +1,9 @@
+.venv/
+.vscode/
+__pycache__/
+output/
+notes/
+screenshots*/
+.env
+metal_*/
+test*/

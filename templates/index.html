@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SV Auto Screenshots</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      .centered {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+      #streetview {
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="centered">
+      <div id="streetview"></div>
+    </div>
+
+    <div class="centered">
+      <button id="btn-screenshot" type="button" class="btn btn-primary btn-screenshot">
+        Screenshot
+      </button>
+    </div>
+    
+    <div id="case-id">{{ id }}</div>
+    <div id="test-screenshots-container"></div>
+    <div id="initial-pano"></div>
+    <div id="current-date"></div>
+    <div id="other-panos"></div>
+
+    <script>
+      // Hack to set preserveDrawingBuffer=true on the WebGL context
+      // This is done so we can take a screenshot with html2canvas 
+      // https://stackoverflow.com/questions/26783586/canvas-todataurl-returns-blank-image
+      HTMLCanvasElement.prototype.getContext = function(origFn) {
+        return function(type, attributes) {
+          if (type === 'webgl') {
+            attributes = Object.assign({}, attributes, {
+              preserveDrawingBuffer: true,
+            });
+          }
+          return origFn.call(this, type, attributes);
+        };
+      }(HTMLCanvasElement.prototype.getContext);
+    </script>
+    <script>
+      // Initialize Google Maps
+      (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: "{{ key }}",
+        v: "3.53",
+      });
+    </script>
+    <script src="{{ url_for('static', filename='scripts/html2canvas.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/screenshot.js') }}">
+    </script>
+    <script src="{{ url_for('static', filename='scripts/maps.js') }}" 
+      data-lat="{{ lat }}"
+      data-lng="{{ lng }}">
+    </script>
+
+  </body>
+</html>
